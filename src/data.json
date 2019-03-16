@@ -1,0 +1,32 @@
+{
+  "uuid": "",
+  "course_built": 1,
+  "course_name": "kejian名称",
+  "course_type": 1,
+  "course_style": 3,
+  "course_status": 1,
+  "course_difficulty": 3,
+  "course_description": "阿斯达岁的\n",
+  "course_direction_uuid": "e3e2a1c0-13df-11e9-8f56-ff6b73128375",
+  "course_direction_type_uuid": "e3e39a10-13df-11e9-acab-fbae6cef836b",
+  "course_period": 33,
+  "doc_name": "aaa.pdf",
+  "doc_path": "doc/aaa.pdf",
+  "video_name": "linux性能监控.mp4",
+  "video_path": "video/linux性能监控.mp4",
+  "exp_name":"",
+  "exp_video_name": "",
+  "exp_video_path": "exp_video",
+  "exp_doc_name": "",
+  "exp_doc_path": "",
+  "exp_enclosure_name": "",
+  "exp_enclosure_path": "",
+  "exp_images": [
+    {
+      "image_file": "image/aaa.ova"
+    },
+    {
+      "image_file": "image/bbb.qcow2"
+    }
+  ]
+}

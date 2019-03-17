@@ -71,42 +71,70 @@ def fun_copy_data():
 
 
 
-# import datetime
-# import mysql.connector
-#
-# cnx = mysql.connector.connect(user='scott', database='employees')
-# cursor = cnx.cursor()
-#
-# query = ("SELECT first_name, last_name, hire_date FROM employees "
-#          "WHERE hire_date BETWEEN %s AND %s")
-#
-# hire_start = datetime.date(1999, 1, 1)
-# hire_end = datetime.date(1999, 12, 31)
-#
-# cursor.execute(query, (hire_start, hire_end))
-#
-# for (first_name, last_name, hire_date) in cursor:
-#   print("{}, {} was hired on {:%d %b %Y}".format(
-#     last_name, first_name, hire_date))
-#
-# cursor.close()
-# cnx.close()
-
 def fun_check_data():
+    try:
+        """数据库连接信息"""
+        mydb = mysql.connector.connect(
+            host="10.0.0.2",  # 数据库主机地址
+            port="3306",
+            user="root",  # 数据库用户名
+            passwd="root",  # 数据库密码
+            database="fusion_platform"
+        )
+        # 打开数据库,以字典格式返回
+        mycursor = mydb.cursor(dictionary=True)
+        # 执行查询
+        mycursor.execute("select uuid,course_name from trial_course")
+        myresult = mycursor.fetchall()
+
+        if os.path.exists('check_log.csv'):
+            os.remove('check_log.csv')
+        with open('check_log.csv', 'a', encoding='utf-8', newline='') as csvfile:
+            write_csv = csv.writer(csvfile)
+            write_csv.writerow(["课件UUID", "课件名称", "视频数量", "视频文件数量",
+                                "文档数量", "文档文件数量", "附件数量", "附件文件数量", "拓扑数据", "虚拟机"])
+            for row_course in myresult:
+                row_data=[]
+                row_data.append(row_course['uuid'])
+                row_data.append(row_course['course_name'])
+
+                #校验视频数据
+                print('课件UUID:', row_course['uuid'], '课件名称', row_course['course_name'])
+                mycursor.execute(
+                    "select uuid,video_name,video_path "
+                    "from trial_video where course_uuid='" + row_course['uuid'] + "'")
+                rst = mycursor.fetchall()
+                row_data.append(len(rst))
+                if len(rst) > 0:
+                    video_count=0
+                    for row_video in rst:
+                        if os.path.exists(row_video['video_path']):
+                            video_count+=1
+                    row_data.append(video_count)
+                else:
+                    row_data.append(0)
+
+
+
+                write_csv.writerow(row_data)
 
 
 
 
-    with open('test.csv', 'a', encoding='utf-8', newline='') as csvfile:
-        write_csv = csv.writer(csvfile)
-        write_csv.writerow(["源文件夹不存在! ", 1111, 2222])
-        write_csv.writerow(["源文件夹不存在! ", 1111, 2222])
-        write_csv.writerow(["源文件夹不存在! ", 1111, 2222])
-        write_csv.writerow(["源文件夹不存在! ", 1111, 2222])
-        write_csv.writerow(["源文件夹不存在! ", 1111, 2222])
+
+
+    except mysql.connector.Error as err:
+        if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+            print("Something is wrong with your user name or password")
+        elif err.errno == errorcode.ER_BAD_DB_ERROR:
+            print("Database does not exist")
+        else:
+            print(err)
+    else:
+        mydb.close()
 
 
 # 启动调试方法
 if __name__ == '__main__':
-    fun_copy_data()
-    # fun_check_data()
+    # fun_copy_data()
+    fun_check_data()
